@@ -1,0 +1,47 @@
+diff --git tranc/VoodooHDADevice.cpp tranc/VoodooHDADevice.cpp
+index d3aa946..10902cc 100755
+--- tranc/VoodooHDADevice.cpp
++++ tranc/VoodooHDADevice.cpp
+@@ -579,6 +579,13 @@ IOService *VoodooHDADevice::probe(IOService *provider, SInt32 *score)
+ 	if (PE_parse_boot_argn("voodoo-layout-id", &boot_arg, sizeof boot_arg))
+ 		mLayoutId = boot_arg;
+ 	IOLog("VoodooHDA DBG: voodoo-layout-id -> mLayoutId=%u\n", (unsigned)mLayoutId);
++	/* legion: a nonzero LayoutId in our personality comes before the PCI layout-id, which
++	   OpenCore/AppleALC set for AppleHDA (7 on the Legion, not a VoodooHDA pin-config layout) */
++	if (mLayoutId == 0) {
++		OSNumber *plistLayout = OSDynamicCast(OSNumber, getProperty("LayoutId"));
++		if (plistLayout)
++			mLayoutId = plistLayout->unsigned32BitValue();
++	}
+ 	if (mLayoutId == 0) {
+ 		layoutData = OSDynamicCast(OSData, mPciNub->getProperty("layout-id"));
+ 		if (layoutData && layoutData->getLength() >= sizeof(UInt32))
+@@ -2924,6 +2931,10 @@ int VoodooHDADevice::audioCtlOssMixerSet(PcmDevice *pcmDevice, UInt32 dev, UInt3
+ 	AudioControl *control;
+ 	UInt32 mask = 0;
+ 	
++	/* legion: dev comes from the user client (0-255); left/right have SOUND_MIXER_NRDEVICES slots */
++	if (dev >= SOUND_MIXER_NRDEVICES)
++		return -1;
++
+ 	LOCK();
+ 	
+ 	//logMsg("VoodooHDADevice[%p]::audioCtlOssMixerSet(%p, %ld, %ld, %ld)\n", this, pcmDevice, dev, left, right);
+@@ -4196,7 +4207,7 @@ void VoodooHDADevice::updatePrefPanelMemoryBuf(void)
+ void VoodooHDADevice::changeSliderValue(UInt8 tabNum, UInt8 sliderNum, UInt8 newValue)
+ {
+ 	//logMsg("change for Device (%d) ossSlider (%d) value to %d\n", tabNum, sliderNum, newValue);
+-	if(tabNum < nSliderTabsCount) {
++	if(tabNum < nSliderTabsCount && sliderNum < SOUND_MIXER_NRDEVICES) {
+ 		PcmDevice* _pcmDevice = sliderTabs[tabNum].pcmDevice;
+ 		if(_pcmDevice)
+ 			audioCtlOssMixerSet(_pcmDevice, sliderNum, newValue, newValue);
+@@ -4208,7 +4219,7 @@ void VoodooHDADevice::setMath(UInt8 tabNum, UInt8 sliderNum, UInt8 newValue)
+ {
+ 	VoodooHDAEngine *engine;
+ 	engine = lookupEngine(tabNum);
+-	if (!engine) return;
++	if (!engine || !engine->mChannel) return;
+ 	UInt8 n, b;
+ 	bool v = ((sliderNum & 1) == 1);
+ 	bool s = ((sliderNum & 2) == 2);

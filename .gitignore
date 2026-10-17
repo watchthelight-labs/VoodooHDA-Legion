@@ -1,0 +1,4 @@
+out/
+VoodooHDA/
+.export-staging/
+.DS_Store

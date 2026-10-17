@@ -1,0 +1,14 @@
+name: build
+on:
+  push:
+  pull_request:
+jobs:
+  build:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - run: ./build.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: VoodooHDA
+          path: out/VoodooHDA.kext
