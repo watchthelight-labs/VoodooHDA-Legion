@@ -8,7 +8,7 @@ On macOS Sequoia the same codec works with AppleALC 1.9.8 and `alcid=18`; this i
 
 | What | Tested on | Result |
 |---|---|---|
-| Internal speakers, volume | Legion 5 15IAX10, macOS 26.7.1 (25G241), VoodooHDA 3.7.0 at commit `beb415a` + `legion.patch`, in `/Library/Extensions` | working daily since 2026-10-16; `system_profiler SPAudioDataType` lists Internal Speakers and Internal Microphone from "Voodoo" |
+| Internal speakers, volume | Legion 5 15IAX10, macOS 26.7.1 (25G241) and 26.7.2 (25G332), VoodooHDA 3.7.0 at commit `beb415a` + `legion.patch`, in `/Library/Extensions` | working daily since 2026-10-16; `system_profiler SPAudioDataType` lists Internal Speakers and Internal Microphone from "Voodoo" |
 | Internal microphone | same | detected (2 channels, 48 kHz); not yet tested in a call |
 | Headphone jack, volume keys, HDMI audio | same | untested; HDMI is not matched on purpose (the PCI match is the 7F50 controller only) |
 
