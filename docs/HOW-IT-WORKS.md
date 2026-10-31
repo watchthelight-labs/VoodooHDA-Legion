@@ -1,4 +1,4 @@
-# How VoodooHDA-Legion works
+# How WTLAudio works
 
 ## Why not AppleALC
 

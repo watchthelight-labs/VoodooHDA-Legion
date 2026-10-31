@@ -1,4 +1,6 @@
-# VoodooHDA-Legion
+# WTLAudio
+
+Renamed from `VoodooHDA-Legion` on 2026-10-31; it is still a VoodooHDA build and the kext is still `VoodooHDA.kext`. Old links redirect here.
 
 Audio on macOS Tahoe for the Realtek ALC257 behind Intel's Arrow Lake-HX HDA controller (`8086:7F50`, Intel Smart Sound in DSP mode), as found in the Lenovo Legion 5 15IAX10. Tahoe removed AppleHDA, so AppleALC has nothing to patch and the usual `alcid=` route is gone. [VoodooHDA](https://github.com/CloverHackyColor/VoodooHDA) is a self-contained HDA driver that does not need AppleHDA. This repository is a small patch on top of it plus a build script that produces the `LE` variant (links the system IOAudioFamily, installs to `/Library/Extensions`) with the Xcode Command Line Tools, matched to the 7F50 controller only, with the ALC257 pin configuration for layout 18. No VoodooHDA code is copied here; the script clones upstream at an audited commit and applies `legion.patch`.
 
